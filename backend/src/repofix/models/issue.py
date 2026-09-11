@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import DateTime, ForeignKey, Integer, String, Text
+from sqlalchemy import BigInteger, DateTime, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from repofix.db.base import Base
@@ -15,10 +15,10 @@ class Issue(Base):
     )
 
     github_issue_id: Mapped[int] = mapped_column(
-        Integer,
+        BigInteger,
         unique=True,
         nullable=False,
-    )
+)
 
     repository_id: Mapped[int] = mapped_column(
         ForeignKey("repositories.id"),

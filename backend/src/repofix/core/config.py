@@ -13,10 +13,10 @@ class Settings(BaseSettings):
     )
 
     model_config = SettingsConfigDict(
-        env_file=".env",
+        env_file=r"C:\Users\Rahul\RepoFix-AI\backend\.env",
         env_file_encoding="utf-8",
         extra="ignore",
-    )
+)
 
 
 settings = Settings()
