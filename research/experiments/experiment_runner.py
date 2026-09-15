@@ -42,6 +42,35 @@ def create_result(
         ).isoformat(),
     }
 
+def update_result_from_fix(
+    result: dict,
+    fix_result: dict,
+) -> dict:
+    attempts = fix_result.get("attempts", [])
+
+    result["success"] = bool(
+        fix_result.get("success", False)
+    )
+
+    result["issue_resolved"] = result["success"]
+
+    result["patch_accepted"] = any(
+        attempt.get("status") == "validated"
+        for attempt in attempts
+    )
+
+    result["tests_passed"] = any(
+        attempt.get("status") == "validated"
+        for attempt in attempts
+    )
+
+    result["retry_count"] = max(
+        0,
+        len(attempts) - 1,
+    )
+
+    return result
+
 
 if __name__ == "__main__":
     config = load_experiment_config()
