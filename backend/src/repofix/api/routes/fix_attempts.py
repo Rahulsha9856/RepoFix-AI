@@ -1,10 +1,10 @@
-from fastapi import APIRouter, Depends
+from uuid import uuid4
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from repofix.db.session import get_db
-from repofix.models import FixAttempt
-from repofix.schemas import FixAttemptCreate, FixAttemptResponse
-
+from repofix.models import FixAttempt, Issue, Repository
+from repofix.services.fix_workflow import FixWorkflow
 
 router = APIRouter(
     prefix="/api/fix-attempts",
@@ -12,25 +12,68 @@ router = APIRouter(
 )
 
 
-@router.post(
-    "/",
-    response_model=FixAttemptResponse,
-)
-def create_fix_attempt(
-    attempt_data: FixAttemptCreate,
+@router.post("/run/{issue_id}")
+def run_fix_workflow(
+    issue_id: int,
     db: Session = Depends(get_db),
 ):
-    attempt = FixAttempt(
-        issue_id=attempt_data.issue_id,
-        attempt_number=attempt_data.attempt_number,
-        status=attempt_data.status,
-        patch=attempt_data.patch,
-        test_output=attempt_data.test_output,
-        error_message=attempt_data.error_message,
+    issue = db.query(Issue).filter(
+        Issue.id == issue_id
+    ).first()
+
+    if issue is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Issue not found",
+        )
+
+    repository = db.query(Repository).filter(
+        Repository.id == issue.repository_id
+    ).first()
+
+    if repository is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Repository not found",
+        )
+
+    run_id = uuid4().hex[:8]
+
+    branch_name = f"repofix/fix-issue-{issue.number}-{run_id}"
+
+    workflow = FixWorkflow()
+
+    result = workflow.run(
+        repository=repository,
+        issue=issue,
+        workspace_path=(
+            f"C:\\Users\\Rahul\\RepoFix-AI\\workspace\\"
+            f"issue-{issue.id}-{run_id}"
+        ),
+        branch_name=branch_name,
     )
 
-    db.add(attempt)
-    db.commit()
-    db.refresh(attempt)
+    return result
 
-    return attempt
+@router.get("/{issue_id}")
+def get_fix_attempts(
+    issue_id: int,
+    db: Session = Depends(get_db),
+):
+    issue = db.query(Issue).filter(
+        Issue.id == issue_id
+    ).first()
+
+    if issue is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Issue not found",
+        )
+
+    attempts = db.query(FixAttempt).filter(
+        FixAttempt.issue_id == issue_id
+    ).order_by(
+        FixAttempt.attempt_number
+    ).all()
+
+    return attempts

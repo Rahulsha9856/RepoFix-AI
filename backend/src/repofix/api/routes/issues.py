@@ -105,3 +105,4 @@ def get_issues(
     db: Session = Depends(get_db),
 ):
     return db.query(Issue).all()
+

@@ -7,6 +7,11 @@ class Settings(BaseSettings):
 
     github_token: str = ""
 
+    gemini_api_key: str = ""
+    gemini_model: str = "gemini-3.6-flash"
+
+    use_mock_llm: bool = True
+    
     database_url: str = (
         "postgresql+psycopg://"
         "repofix:repofix@localhost:5432/repofix"
