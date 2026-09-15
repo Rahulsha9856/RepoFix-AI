@@ -1,0 +1,44 @@
+{
+  "experiment": "RepoFix AI Reliability Evaluation",
+  "research_question": "Does combining repository-aware retrieval, static analysis, and automated test validation improve the reliability of LLM-generated bug fixes compared with direct LLM code generation?",
+  "conditions": {
+    "A": {
+      "name": "Direct LLM",
+      "pipeline": [
+        "GitHub issue",
+        "LLM",
+        "patch"
+      ]
+    },
+    "B": {
+      "name": "Repository-Aware LLM",
+      "pipeline": [
+        "GitHub issue",
+        "repository retrieval",
+        "LLM",
+        "patch"
+      ]
+    },
+    "C": {
+      "name": "RepoFix AI",
+      "pipeline": [
+        "GitHub issue",
+        "repository retrieval",
+        "static analysis",
+        "LLM reasoning",
+        "patch",
+        "automated tests",
+        "validation and retry"
+      ]
+    }
+  },
+  "metrics": [
+    "issue_resolution_rate",
+    "patch_acceptance_rate",
+    "test_pass_rate",
+    "incorrect_modification_rate",
+    "average_retries",
+    "file_localization_precision",
+    "file_localization_recall"
+  ]
+}
