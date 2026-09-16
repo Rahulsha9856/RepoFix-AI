@@ -1,0 +1,16 @@
+{
+  "experiment": "RepoFix AI Reliability Evaluation",
+  "condition": "C",
+  "condition_name": "RepoFix AI",
+  "issue_id": 3,
+  "success": true,
+  "issue_resolved": true,
+  "patch_accepted": true,
+  "tests_passed": true,
+  "incorrect_modification": false,
+  "retry_count": 0,
+  "localized_files": [
+    "demo_bug/calculator.py"
+  ],
+  "timestamp": "2026-09-16T08:18:51.725900+00:00"
+}
