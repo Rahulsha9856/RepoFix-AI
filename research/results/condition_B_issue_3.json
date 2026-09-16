@@ -1,0 +1,17 @@
+{
+  "experiment": "RepoFix AI Reliability Evaluation",
+  "condition": "B",
+  "condition_name": "Repository-Aware LLM",
+  "issue_id": 3,
+  "success": true,
+  "issue_resolved": false,
+  "patch_accepted": false,
+  "tests_passed": false,
+  "incorrect_modification": false,
+  "retry_count": 0,
+  "localized_files": [
+    "demo_bug/calculator.py"
+  ],
+  "patch": "diff --git a/demo_bug/calculator.py b/demo_bug/calculator.py\n--- a/demo_bug/calculator.py\n+++ b/demo_bug/calculator.py\n@@ -1,2 +1,2 @@\n def add(a, b):\n-    return a - b\n+    return a + b\n",
+  "timestamp": "2026-09-16T08:29:33.539701+00:00"
+}
