@@ -19,7 +19,12 @@ class LLMClient:
 
     def generate(self, prompt: str) -> str:
         if settings.use_mock_llm:
-            if "Generate a unified Git diff" in prompt:
+
+            # Calculator addition bug
+            if (
+                "calculator" in prompt.lower()
+                and "addition" in prompt.lower()
+            ):
                 return (
                     "diff --git a/demo_bug/calculator.py "
                     "b/demo_bug/calculator.py\n"
@@ -31,6 +36,23 @@ class LLMClient:
                     "+    return a + b\n"
                 )
 
+            # Multiplication bug
+            if (
+                "multiply" in prompt.lower()
+                or "multiplication" in prompt.lower()
+            ):
+                return (
+                    "diff --git a/demo_bug/multiply.py "
+                    "b/demo_bug/multiply.py\n"
+                    "--- a/demo_bug/multiply.py\n"
+                    "+++ b/demo_bug/multiply.py\n"
+                    "@@ -1,2 +1,2 @@\n"
+                    " def multiply(a, b):\n"
+                    "-    return a + b\n"
+                    "+    return a * b\n"
+                )
+
+            # Generic analysis response
             return (
                 "Mock RepoFix analysis: "
                 "repository context was retrieved successfully. "

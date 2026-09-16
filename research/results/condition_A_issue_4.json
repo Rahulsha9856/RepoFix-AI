@@ -1,0 +1,17 @@
+{
+  "experiment": "RepoFix AI Reliability Evaluation",
+  "condition": "A",
+  "condition_name": "Direct LLM",
+  "issue_id": 4,
+  "success": true,
+  "issue_resolved": false,
+  "patch_accepted": false,
+  "tests_passed": false,
+  "incorrect_modification": false,
+  "retry_count": 0,
+  "localized_files": [
+    "demo_bug/multiply.py"
+  ],
+  "patch": "diff --git a/demo_bug/multiply.py b/demo_bug/multiply.py\n--- a/demo_bug/multiply.py\n+++ b/demo_bug/multiply.py\n@@ -1,2 +1,2 @@\n def multiply(a, b):\n-    return a + b\n+    return a * b\n",
+  "timestamp": "2026-09-16T09:13:24.653503+00:00"
+}

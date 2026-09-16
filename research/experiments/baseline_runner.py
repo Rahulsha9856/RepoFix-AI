@@ -4,7 +4,6 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 
-# Add backend/src to Python path
 BACKEND_SRC = (
     Path(__file__).resolve().parents[2]
     / "backend"
@@ -13,7 +12,6 @@ BACKEND_SRC = (
 
 if str(BACKEND_SRC) not in sys.path:
     sys.path.insert(0, str(BACKEND_SRC))
-
 
 from repofix.agents.llm_client import LLMClient
 
@@ -26,40 +24,41 @@ RESULTS_DIR = (
 
 def run_condition_a(
     issue_id: int,
-    repository_path: str,
+    issue_title: str,
+    issue_description: str,
 ) -> dict:
     """
     Condition A:
-    Direct LLM baseline.
-
-    Pipeline:
-    GitHub issue -> LLM -> patch
+    GitHub Issue -> Direct LLM -> Patch
     """
 
     llm = LLMClient()
 
-    prompt = """
+    prompt = f"""
 You are fixing a GitHub issue.
 
 Issue title:
-Fix calculator addition bug
+{issue_title}
 
 Issue description:
-The add function in demo_bug/calculator.py is incorrect.
-It currently subtracts b from a, but it should return
-the sum of a and b.
+{issue_description}
 
-Expected behavior:
-add(2, 3) should return 5.
-
-Generate a unified Git diff containing the required fix.
+Generate ONLY a unified Git diff containing
+the required fix.
 
 Do not analyze the repository.
 Do not retrieve additional files.
+Do not run tests.
 Return only the patch.
 """
 
     patch = llm.generate(prompt)
+
+    localized_files = []
+
+    for line in patch.splitlines():
+        if line.startswith("+++ b/"):
+            localized_files.append(line[6:])
 
     result = {
         "experiment": "RepoFix AI Reliability Evaluation",
@@ -72,25 +71,12 @@ Return only the patch.
         "tests_passed": False,
         "incorrect_modification": False,
         "retry_count": 0,
-        "localized_files": [],
+        "localized_files": localized_files,
         "patch": patch,
         "timestamp": datetime.now(
             timezone.utc
         ).isoformat(),
     }
-
-    # Extract files mentioned by the generated patch
-    for line in patch.splitlines():
-        if line.startswith("+++ b/"):
-            result["localized_files"].append(
-                line[6:]
-            )
-
-    # Condition A does not perform automated
-    # repository validation.
-    result["issue_resolved"] = False
-    result["patch_accepted"] = False
-    result["tests_passed"] = False
 
     RESULTS_DIR.mkdir(
         parents=True,
@@ -118,10 +104,21 @@ Return only the patch.
 if __name__ == "__main__":
 
     result = run_condition_a(
-        issue_id=3,
-        repository_path=(
-            r"C:\Users\Rahul\RepoFix-AI"
+        issue_id=4,
+        issue_title="Fix multiplication bug",
+        issue_description=(
+            "The multiply function in "
+            "demo_bug/multiply.py is incorrect. "
+            "It currently adds a and b, but it should "
+            "return the product of a and b. "
+            "Expected behavior: multiply(4, 5) should "
+            "return 20."
         ),
     )
 
-    print(json.dumps(result, indent=2))
+    print(
+        json.dumps(
+            result,
+            indent=2,
+        )
+    )
