@@ -1,0 +1,39 @@
+{
+  "experiment": "RepoFix AI Reliability Evaluation",
+  "issue_id": 3,
+  "conditions": {
+    "A": {
+      "condition_name": "Direct LLM",
+      "issue_resolution_rate": 0,
+      "patch_acceptance_rate": 0,
+      "test_pass_rate": 0,
+      "incorrect_modification_rate": 0,
+      "average_retries": 0,
+      "localized_files": [
+        "demo_bug/calculator.py"
+      ]
+    },
+    "B": {
+      "condition_name": "Repository-Aware LLM",
+      "issue_resolution_rate": 0,
+      "patch_acceptance_rate": 0,
+      "test_pass_rate": 0,
+      "incorrect_modification_rate": 0,
+      "average_retries": 0,
+      "localized_files": [
+        "demo_bug/calculator.py"
+      ]
+    },
+    "C": {
+      "condition_name": "RepoFix AI",
+      "issue_resolution_rate": 1,
+      "patch_acceptance_rate": 1,
+      "test_pass_rate": 1,
+      "incorrect_modification_rate": 0,
+      "average_retries": 0,
+      "localized_files": [
+        "demo_bug/calculator.py"
+      ]
+    }
+  }
+}
