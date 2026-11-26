@@ -10,7 +10,9 @@ class RepositoryRetriever:
         repository_path: str,
         query: str,
     ) -> list[dict[str, str]]:
-        index = self.indexer.build_index(repository_path)
+        index = self.indexer.build_index(
+            repository_path
+        )
 
         keywords = {
             word.lower()
@@ -21,14 +23,18 @@ class RepositoryRetriever:
         results: list[dict[str, str]] = []
 
         for item in index:
-            searchable_text = (
-                f"{item['path']} {item['content']}"
-            ).lower()
+            path = item["path"].lower()
+            content = item["content"].lower()
 
-            score = sum(
-                keyword in searchable_text
-                for keyword in keywords
-            )
+            score = 0
+
+            # Strongly prioritize filename/path matches
+            for keyword in keywords:
+                if keyword in path:
+                    score += 5
+
+                if keyword in content:
+                    score += 1
 
             if score > 0:
                 results.append(

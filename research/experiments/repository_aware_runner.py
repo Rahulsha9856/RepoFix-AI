@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 
-# Add backend/src to Python path
+# Add backend/src to Python path BEFORE importing repofix
 BACKEND_SRC = (
     Path(__file__).resolve().parents[2]
     / "backend"
@@ -16,6 +16,7 @@ if str(BACKEND_SRC) not in sys.path:
 
 
 from repofix.agents.llm_client import LLMClient
+from repofix.retrieval.retriever import RepositoryRetriever
 
 
 RESULTS_DIR = (
@@ -24,64 +25,57 @@ RESULTS_DIR = (
 )
 
 
-def read_repository_context(
-    repository_path: str,
-) -> str:
-
-    calculator_file = (
-        Path(repository_path)
-        / "demo_bug"
-        / "calculator.py"
-    )
-
-    if calculator_file.exists():
-        return calculator_file.read_text(
-            encoding="utf-8"
-        )
-
-    return ""
-
-
 def run_condition_b(
     issue_id: int,
     repository_path: str,
+    issue_title: str,
+    issue_description: str,
 ) -> dict:
     """
     Condition B:
-    Repository-Aware LLM
-
-    Pipeline:
-    GitHub issue -> repository retrieval -> LLM -> patch
+    GitHub Issue -> Repository Retrieval -> LLM -> Patch
     """
 
-    repository_context = (
-        read_repository_context(
-            repository_path
-        )
+    retriever = RepositoryRetriever()
+    llm = LLMClient()
+
+    relevant_files = retriever.search(
+        repository_path=repository_path,
+        query=(
+            f"{issue_title} "
+            f"{issue_description}"
+        ),
     )
 
-    llm = LLMClient()
+    context = "\n\n".join(
+        [
+            f"FILE: {file['path']}\n{file['content']}"
+            for file in relevant_files
+        ]
+    )
 
     prompt = f"""
 You are fixing a GitHub issue.
 
 Issue title:
-Fix calculator addition bug
+{issue_title}
 
 Issue description:
-The add function in demo_bug/calculator.py is incorrect.
-It should return the sum of a and b.
+{issue_description}
 
 Repository context:
+{context}
 
-{repository_context}
-
-Generate a unified Git diff.
-
-Return only the patch.
+Generate ONLY a unified Git diff.
 """
 
     patch = llm.generate(prompt)
+
+    localized_files = []
+
+    for line in patch.splitlines():
+        if line.startswith("+++ b/"):
+            localized_files.append(line[6:])
 
     result = {
         "experiment": "RepoFix AI Reliability Evaluation",
@@ -94,18 +88,16 @@ Return only the patch.
         "tests_passed": False,
         "incorrect_modification": False,
         "retry_count": 0,
-        "localized_files": [],
+        "localized_files": localized_files,
+        "retrieved_files": [
+            file["path"]
+            for file in relevant_files
+        ],
         "patch": patch,
         "timestamp": datetime.now(
             timezone.utc
         ).isoformat(),
     }
-
-    for line in patch.splitlines():
-        if line.startswith("+++ b/"):
-            result["localized_files"].append(
-                line[6:]
-            )
 
     RESULTS_DIR.mkdir(
         parents=True,
@@ -133,9 +125,19 @@ Return only the patch.
 if __name__ == "__main__":
 
     result = run_condition_b(
-        issue_id=3,
+        issue_id=4,
         repository_path=(
-            r"C:\Users\Rahul\RepoFix-AI\workspace\issue-3-8089e4e8"
+            r"C:\Users\Rahul\RepoFix-AI"
+            r"\workspace\issue-4"
+        ),
+        issue_title="Fix multiplication bug",
+        issue_description=(
+            "The multiply function in "
+            "demo_bug/multiply.py is incorrect. "
+            "It currently adds a and b, but it should "
+            "return the product of a and b. "
+            "Expected behavior: multiply(4, 5) "
+            "should return 20."
         ),
     )
 
