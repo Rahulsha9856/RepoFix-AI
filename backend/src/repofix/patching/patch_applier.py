@@ -1,41 +1,37 @@
+
 import subprocess
 from pathlib import Path
 
 
 class PatchApplier:
     def apply(self, repository_path: str, patch: str) -> str:
+        repository = Path(repository_path)
+
         patch = patch.replace("\r\n", "\n").replace("\r", "\n")
-
-        # Normalize line endings in files referenced by the patch.
-        for line in patch.splitlines():
-            if line.startswith("+++ b/"):
-                relative_path = line[6:].strip()
-                target_file = Path(repository_path) / relative_path
-
-                if target_file.is_file():
-                    content = target_file.read_text(
-                        encoding="utf-8"
-                    )
-                    target_file.write_text(
-                        content.replace("\r\n", "\n").replace("\r", "\n"),
-                        encoding="utf-8",
-                        newline="\n",
-                    )
+        patch = patch.strip() + "\n"
 
         result = subprocess.run(
-            ["git", "apply", "--whitespace=fix", "-"],
-            cwd=repository_path,
+            [
+                "git",
+                "-c", "core.autocrlf=false",
+                "apply",
+                "--ignore-whitespace",
+                "--whitespace=nowarn",
+                "-",
+            ],
+            cwd=str(repository),
             input=patch,
             capture_output=True,
             text=True,
             encoding="utf-8",
+            errors="replace",
         )
 
         if result.returncode != 0:
+            error_message = result.stderr or result.stdout
             raise RuntimeError(
-                f"Patch application failed:\n"
-                f"{result.stderr}"
-                f"\nPatch received by Git:\n{patch!r}"
+                f"Patch application failed:\n{error_message}\n\n"
+                f"Patch received by Git:\n{patch}"
             )
 
         return "Patch applied successfully"

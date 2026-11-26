@@ -28,3 +28,40 @@ build/
 *.egg-info/
 # RepoFix AI workspaces
 workspace/
+
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+.coverage
+
+# Node
+node_modules/
+dist/
+npm-debug.log*
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.log
+*.tmp
+
+# Runtime workspace
+workspace/
+
+# Environment and generated files
+.env.local

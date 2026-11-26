@@ -500,3 +500,164 @@ footer span {
     grid-template-columns: 1fr;
   }
 }
+
+/* Dynamic dashboard improvements */
+
+form select {
+  width: 100%;
+  padding: 13px 14px;
+  border-radius: 9px;
+  border: 1px solid #303b59;
+  outline: none;
+  color: #e9edf7;
+  background: #0c1324;
+  font: inherit;
+  font-size: 13px;
+}
+
+form select:focus {
+  border-color: #8290ff;
+  box-shadow: 0 0 0 3px rgba(130, 144, 255, 0.1);
+}
+
+.red-text {
+  color: #ff7b91;
+}
+
+.status-dot.offline {
+  background: #ff657b;
+  box-shadow: 0 0 10px rgba(255, 101, 123, 0.4);
+}
+
+.offline-status {
+  border-color: #713849;
+}
+
+.repair-banner {
+  padding: 15px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  margin-bottom: 17px;
+}
+
+.repair-banner.success {
+  color: #67e3b2;
+  background: rgba(38, 125, 91, 0.15);
+  border: 1px solid #286b55;
+}
+
+.repair-banner.failure {
+  color: #ff9aaa;
+  background: rgba(130, 42, 60, 0.15);
+  border: 1px solid #713849;
+}
+
+.repair-banner span {
+  font-size: 11px;
+  opacity: 0.85;
+}
+
+.result-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 9px;
+  margin-bottom: 16px;
+}
+
+.result-metrics > div {
+  background: #0c1324;
+  border: 1px solid #26314d;
+  border-radius: 9px;
+  padding: 12px;
+  min-width: 0;
+}
+
+.result-metrics span,
+.result-detail > span {
+  display: block;
+  color: #8996b5;
+  font-size: 10px;
+  margin-bottom: 7px;
+}
+
+.result-metrics strong {
+  display: block;
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+
+.result-detail {
+  padding: 11px 0;
+  border-bottom: 1px solid #26314d;
+}
+
+.result-detail code {
+  color: #b9d7ff;
+  font-size: 11px;
+  overflow-wrap: anywhere;
+}
+
+.pr-link {
+  display: block;
+  padding: 13px;
+  margin: 15px 0;
+  border-radius: 9px;
+  border: 1px solid #485a9b;
+  background: #202b4b;
+  color: #c8d1ff;
+  text-decoration: none;
+  font-size: 12px;
+  text-align: center;
+}
+
+.pr-link:hover {
+  background: #29375e;
+}
+
+.test-output,
+.patch-details {
+  margin-top: 16px;
+}
+
+.test-output > strong {
+  display: block;
+  color: #b9c4dc;
+  font-size: 12px;
+  margin-bottom: 9px;
+}
+
+.test-output pre,
+.patch-details pre {
+  max-height: 180px;
+  overflow: auto;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  background: #0a1020;
+  border: 1px solid #26314d;
+  border-radius: 9px;
+  padding: 13px;
+  color: #b9d7ff;
+  font: 11px/1.6 Consolas, monospace;
+}
+
+.patch-details summary {
+  color: #aebaff;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.loading-state p {
+  color: #8996b5;
+  font-size: 11px;
+  line-height: 1.6;
+  margin: 12px 0;
+}
+
+@media (max-width: 650px) {
+  .result-metrics {
+    grid-template-columns: 1fr;
+  }
+}

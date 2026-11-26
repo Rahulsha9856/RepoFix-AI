@@ -71,8 +71,9 @@ Explain how the patch should be corrected.
                 continue
 
             test_result = self.test_runner.run_pytest(
-                repository_path
-            )
+                repository_path,
+                patch,
+)
 
             validation = self.validator.validate(
                 test_result,

@@ -1,3 +1,4 @@
+
 from google import genai
 
 from repofix.core.config import settings
@@ -19,7 +20,22 @@ class LLMClient:
         if settings.use_mock_llm:
             prompt_lower = prompt.lower()
 
-            # Handle the calculator addition issue first.
+            # Multiplication issue: check this before other calculator issues.
+            if (
+                "multiplication bug" in prompt_lower
+                or "fix multiplication" in prompt_lower
+                or "multiply(a, b)" in prompt_lower
+            ):
+                return """diff --git a/demo_bug/multiply.py b/demo_bug/multiply.py
+--- a/demo_bug/multiply.py
++++ b/demo_bug/multiply.py
+@@ -1,2 +1,2 @@
+ def multiply(a, b):
+-    return a + b
++    return a * b
+"""
+
+            # Addition issue
             if (
                 "fix calculator addition bug" in prompt_lower
                 or (
@@ -36,21 +52,6 @@ class LLMClient:
 +    return a + b
 """
 
-            # Handle the multiplication issue.
-            if (
-                "fix multiplication bug" in prompt_lower
-                or "multiplication bug" in prompt_lower
-            ):
-                return """diff --git a/demo_bug/multiply.py b/demo_bug/multiply.py
---- a/demo_bug/multiply.py
-+++ b/demo_bug/multiply.py
-@@ -1,2 +1,2 @@
- def multiply(a, b):
--    return a + b
-+    return a * b
-"""
-
-            # Generic mock response for other prompts.
             return (
                 "Analyze the issue and identify the relevant code. "
                 "No mock patch is available for this specific issue."
